@@ -25,3 +25,5 @@ else:unix: LIBS += -L$$OUT_PWD/../libgambel/ -llibgambel
 
 INCLUDEPATH += $$PWD/../libgambel
 DEPENDPATH += $$PWD/../libgambel
+
+

@@ -1,22 +1,29 @@
-#ifndef LIBGAMBEL_H
-#define LIBGAMBEL_H
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#if defined(__MSC_VER)
+#define EXPORT __declspec(dllexport)
+#define IMPORT __declspec(dllimport)
+#else
+#define EXPORT
+#define IMPORT
+#endif
+
 #include "defines.h"
+#include "cpu.h"
 
-struct GB {
+typedef struct {
 	u8 memory;
-};
-typedef struct GB GB;
+	CPU *cpu;
+} GB;
 
-GB* GB_Create();
-void GB_Destroy(GB* gb);
+
+EXPORT GB* GB_Create();
+EXPORT void GB_Destroy(GB* gb);
 
 #ifdef __cplusplus
 }
 #endif
-
-#endif // LIBGAMBEL_H

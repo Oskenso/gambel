@@ -13,10 +13,13 @@ TEMPLATE = lib
 DEFINES += LIBGAMBEL_LIBRARY
 
 SOURCES += \
-    libgambel.c
+    libgambel.c \
+    cpu.c
 
 HEADERS += libgambel.h \
-    defines.h
+    defines.h \
+    cpu.h \
+    memory.h
 
 unix {
     target.path = /usr/lib

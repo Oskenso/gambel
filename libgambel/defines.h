@@ -1,6 +1,4 @@
-#ifndef DEFINES_H
-#define DEFINES_H
-
+#pragma once
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -14,5 +12,3 @@ typedef uint16_t u16;
 #ifdef __cplusplus
 }
 #endif
-
-#endif // DEFINES_H

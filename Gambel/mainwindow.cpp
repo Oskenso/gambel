@@ -9,8 +9,11 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 	ui->setupUi(this);
 	GB* gambel = GB_Create();
-	gambel->memory = 300;
-	qDebug() << gambel->memory;
+
+	gambel->cpu->registers.F = 0;
+	gambel->cpu->registers.zero = 1;
+
+	qDebug() << gambel->cpu->registers.F;
 	GB_Destroy(gambel);
 }
 
