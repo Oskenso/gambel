@@ -7,76 +7,66 @@ extern "C" {
 #include "defines.h"
 
 typedef struct {
-	u8 zero:1;
-	u8 negative: 1;
-	u8 halfCarry: 1;
-	u8 carry:1;
-
-} FLAGS;
-
-typedef struct {
 	struct {
 		union {
 			struct {
-				//unsigned char F;
 				union {
-					unsigned char F;
+					u8 F;
 					struct {
-						unsigned char unused: 4;
-						unsigned char zero: 1;
-						unsigned char negative: 1;
-						unsigned char halfCarry: 1;
-						unsigned char carry: 1;
+						u8 unused: 4;
+						u8 zero: 1;
+						u8 negative: 1;
+						u8 halfCarry: 1;
+						u8 carry: 1;
 
 					};
 				};
-
-				unsigned char A;
+				u8 A;
 			};
-			unsigned short AF;
+			u16 AF;
 		};
 	};
 
 	struct {
 		union {
 			struct {
-				unsigned char C;
-				unsigned char B;
+				u8 C;
+				u8 B;
 			};
-			unsigned short BC;
+			u16 BC;
 		};
 	};
 
 	struct {
 		union {
 			struct {
-				unsigned char E;
-				unsigned char D;
+				u8 E;
+				u8 D;
 			};
-			unsigned short DE;
+			u16 DE;
 		};
 	};
 
 	struct {
 		union {
 			struct {
-				unsigned char L;
-				unsigned char H;
+				u8 L;
+				u8 H;
 			};
-			unsigned short HL;
+			u16 HL;
 		};
 	};
 
-	unsigned short SP;
-	unsigned short PC;
+	u16 SP;
+	u16 PC;
 } REGISTERS;
 
 
 
 typedef struct{
-	FLAGS flags;
 	REGISTERS registers;
-	u8 memory[(1024 * 64)];
+	//u8 memory[(1024 * 64)];
+	u8 *memory;
 
 } CPU;
 

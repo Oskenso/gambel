@@ -16,13 +16,14 @@ extern "C" {
 #include "cpu.h"
 
 typedef struct {
-	u8 memory;
+	//u8 memory;
 	CPU *cpu;
 } GB;
 
 
 EXPORT GB* GB_Create();
 EXPORT void GB_Destroy(GB* gb);
+EXPORT void GB_LoadRom(GB* gb, u8 *romData);
 
 #ifdef __cplusplus
 }
