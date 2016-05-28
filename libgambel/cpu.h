@@ -72,6 +72,7 @@ typedef struct{
 
 CPU* CPU_Create();
 void CPU_Destroy(CPU*);
+u8 CPU_Execute(CPU* cpu);
 
 typedef struct {
 

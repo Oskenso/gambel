@@ -5,16 +5,20 @@ GB* GB_Create()
 {
 	GB *gb = (GB*) malloc(sizeof(GB));
 	gb->cpu->registers.BC = 0xABCD;
-	printf("%02x", gb->cpu->registers.B);
-	printf("%02x", gb->cpu->registers.C);
 	//CPU *cpu = CPU_Create();
 	gb->cpu = CPU_Create();
 
 	return gb;
 }
 
-void GB_LoadRom(GB* gb, u8 *romData)
+void GB_LoadRom(GB* gb, uint8_t *romData)
 {
+	memcpy(gb->cpu->memory, romData, 0x8000);
+}
+
+u8 GB_Step(GB* gb)
+{
+	return CPU_Execute(gb->cpu);
 
 }
 

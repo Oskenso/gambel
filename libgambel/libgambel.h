@@ -14,6 +14,7 @@ extern "C" {
 
 #include "defines.h"
 #include "cpu.h"
+#include <string.h>
 
 typedef struct {
 	//u8 memory;
@@ -23,7 +24,8 @@ typedef struct {
 
 EXPORT GB* GB_Create();
 EXPORT void GB_Destroy(GB* gb);
-EXPORT void GB_LoadRom(GB* gb, u8 *romData);
+EXPORT void GB_LoadRom(GB* gb, uint8_t *romData);
+EXPORT u8 GB_Step(GB* gb);
 
 #ifdef __cplusplus
 }

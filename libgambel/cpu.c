@@ -163,11 +163,13 @@ const INSTRUCTION instructions[256] = {
 	{"INC C", 1, 4, ins_0x0C}
 };
 
-int CPU_Execute(CPU* cpu)
+#include <stdio.h>
+u8 CPU_Execute(CPU* cpu)
 {
 	const u16 cPC = cpu->registers.PC;
-	instructions[cpu->registers.PC++].exc(cpu);
-	cpu->registers.PC += instructions[cPC].length - 1;
+	printf("%d", instructions[cpu->memory[cPC]].length);
+	instructions[cpu->memory[cpu->registers.PC++]].exc(cpu);
+	cpu->registers.PC += instructions[cpu->memory[cPC]].length - 1;
 	return instructions[cPC].cycles;
 }
 

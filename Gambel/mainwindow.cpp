@@ -4,6 +4,8 @@
 #include "qdebug.h"
 
 #include <QFileDialog>
+#include <stdio.h>
+
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
@@ -17,20 +19,30 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	qDebug() << gambel->cpu->registers.F;
 
-	QString fileName = QFileDialog::getOpenFileName(this, tr("Open Rom"), "dir", "*.*");
+
+	QString fileName = QFileDialog::getOpenFileName(this, tr("Open Rom"), "/home/oskenso/Downloads/", "*.*");
 
 	QFile file(fileName);
 	if (file.open(QIODevice::ReadOnly)) {
 		QByteArray dataFile = file.readAll();
-		//gambel->
-		GB_LoadRom(gb, dataFile.data());
+
+		GB_LoadRom(gambel, (uint8_t*)dataFile.data());
+
+
 	}
+
+
+	//sprintf(stest, "0x%02x", gambel->cpu->memory[0x100]);
+
+	//qDebug() << sprintf("0x%04x", gambel->cpu->memory[0x100]);
+
 	//delete file;
 
-	//GB_LoadRom(gambel, d;
-	//gambel->LoadRom(fileName);
+	qDebug() << gambel->cpu->memory[gambel->cpu->registers.PC];
+	qDebug() << GB_Step(gambel);
+	qDebug() << GB_Step(gambel);
+	qDebug() << GB_Step(gambel);
 
-	qDebug() << fileName;
 
 	GB_Destroy(gambel);
 }
