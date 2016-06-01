@@ -80,7 +80,7 @@ typedef struct {
 	u8 length;
 	u8 cycles;
 	//FLAGS flags; // flags affected
-	void (*exc)(CPU*);
+	u8 (*exc)(CPU*);
 
 
 } INSTRUCTION;

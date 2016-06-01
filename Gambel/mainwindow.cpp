@@ -4,7 +4,6 @@
 #include "qdebug.h"
 
 #include <QFileDialog>
-#include <stdio.h>
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -31,17 +30,31 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	}
 
-
+#include <string.h>
 	//sprintf(stest, "0x%02x", gambel->cpu->memory[0x100]);
 
 	//qDebug() << sprintf("0x%04x", gambel->cpu->memory[0x100]);
 
 	//delete file;
 
-	qDebug() << gambel->cpu->memory[gambel->cpu->registers.PC];
-	qDebug() << GB_Step(gambel);
-	qDebug() << GB_Step(gambel);
-	qDebug() << GB_Step(gambel);
+	//qDebug() << gambel->cpu->memory[gambel->cpu->registers.PC];
+	//qDebug() << QString(gambel->cpu->registers.PC).asprintf("0x%04x");
+
+	//qDebug() << QString("0x%04x").arg(gambel->cpu->memory[gambel->cpu->registers.PC]);
+
+	char f[6];
+
+	for (int i = 0; i < 15; i++)
+	{
+		sprintf(f, "Opcode: 0x%02x", gambel->cpu->memory[gambel->cpu->registers.PC]);
+		qDebug() << f;
+		sprintf(f, "PC: 0x%04x", gambel->cpu->registers.PC);
+		qDebug() << f;
+		qDebug() << GB_Step(gambel);
+	}
+
+
+
 
 
 	GB_Destroy(gambel);
