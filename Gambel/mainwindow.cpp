@@ -13,8 +13,6 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->setupUi(this);
 	GB* gambel = GB_Create();
 
-	gambel->cpu->registers.F = 0;
-	gambel->cpu->registers.zero = 1;
 
 	qDebug() << gambel->cpu->registers.F;
 
@@ -44,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	char f[6];
 
-	for (int i = 0; i < 15; i++)
+	for (int i = 0; i < 30; i++)
 	{
 		sprintf(f, "Opcode: 0x%02x", gambel->cpu->memory[gambel->cpu->registers.PC]);
 		qDebug() << f;

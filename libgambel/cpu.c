@@ -54,9 +54,13 @@ u8 ins_0x0C(CPU* cpu);
 
 u8 ins_0x18(CPU* cpu);
 
+u8 ins_0x3E(CPU* cpu);
+
 u8 ins_0xAF(CPU* cpu);
 
 u8 ins_0xC3(CPU* cpu);
+
+u8 ins_0xCD(CPU* cpu);
 
 u8 ins_0xEA(CPU* cpu);
 
@@ -209,9 +213,24 @@ u8 ins_0x28(CPU* cpu)
 	return 0;
 }
 
+u8 ins_0x3E(CPU* cpu)
+{
+	cpu->registers.A = cpu->memory[cpu->registers.PC];
+	return 0;
+}
+
 u8 ins_0xC3(CPU* cpu)
 {
 	cpu->registers.PC = ReadNextShort(cpu);
+	cpu->registers.PC -= 2;
+	return 0;
+}
+
+u8 ins_0xCD(CPU* cpu)
+{
+	//cpu->registers.SP;
+	cpu->registers.SP = cpu->registers.PC - 2;
+	cpu->registers.PC = cpu->memory[cpu->registers.PC];
 	cpu->registers.PC -= 2;
 	return 0;
 }
@@ -276,7 +295,9 @@ const INSTRUCTION instructions[256] = {
 	{},{},{},{},{},{},{},
 	{},{},{},{},{},{},{},{},
 	{"JR Z,r8", 2, 8, ins_0x28},{},{},{},{},{},{},{},//2
-	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},
+	{},{},{},{},{},{},{},{},{},{},{},{},{},{},
+	{"LD A,d8", 2, 8, ins_0x3E},
+	{},//3
 	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//4
 	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},
 	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//6
@@ -287,9 +308,11 @@ const INSTRUCTION instructions[256] = {
 	{"XOR A", 1, 4, ins_0xAF},//A
 	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//B
 	{},{},{},
-	{"JP a16", 3, 26, ins_0xC3},{},{},{},{},{},{},{},{},{},{},{},{},//C
+	{"JP a16", 3, 26, ins_0xC3},{},{},{},{},{},{},{},{},{},
+	{"CALL a16", 3, 24, ins_0xCD},
+	{},{},//C
 	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//D
-	{"LDH (a8),A", 2, 12},{},{},{},{},{},{},{},{},{},
+	{"LDH (a8),A", 2, 12, ins_0xE0},{},{},{},{},{},{},{},{},{},
 	{"LD (a16),A", 3, 16, ins_0xEA},{},{},{},{},{},//E
 	{},{},{},
 	{"DI", 1, 4, ins_0xF3},{},{},{},{},{},{},{},{},{},{},

@@ -4,7 +4,7 @@
 GB* GB_Create()
 {
 	GB *gb = (GB*) malloc(sizeof(GB));
-	gb->cpu->registers.BC = 0xABCD;
+
 	//CPU *cpu = CPU_Create();
 	gb->cpu = CPU_Create();
 
