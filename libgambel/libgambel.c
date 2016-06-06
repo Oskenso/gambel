@@ -13,7 +13,7 @@ GB* GB_Create()
 
 void GB_LoadRom(GB* gb, uint8_t *romData)
 {
-	memcpy(gb->cpu->memory, romData, 0x8000);
+	memcpy(&gb->cpu->memory[0x100], romData, 0x8000);
 }
 
 u8 GB_Step(GB* gb)

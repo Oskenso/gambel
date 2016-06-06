@@ -19,9 +19,9 @@ HEADERS  += mainwindow.h
 
 FORMS    += mainwindow.ui
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../libgambel/release/ -llibgambel
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../libgambel/debug/ -llibgambel
-else:unix: LIBS += -L$$OUT_PWD/../libgambel/ -llibgambel
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../libgambel/release/ -lgambel
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../libgambel/debug/ -lgambel
+else:unix: LIBS += -L$$OUT_PWD/../libgambel/ -lgambel
 
 INCLUDEPATH += $$PWD/../libgambel
 DEPENDPATH += $$PWD/../libgambel

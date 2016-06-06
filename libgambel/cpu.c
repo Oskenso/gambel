@@ -7,8 +7,7 @@ u8 ReadNext(CPU *cpu)
 
 u16 ReadNextShort(CPU* cpu)
 {
-	//return cpu->memory[cpu->registers.PC] << 8 | cpu->memory[cpu->registers.PC+1];
-	return cpu->memory[cpu->registers.PC+1] << 8 | cpu->memory[cpu->registers.PC];
+	return cpu->memory[cpu->registers.PC] | (cpu->memory[cpu->registers.PC+1] << 8);
 }
 
 u16 MemReadShort(CPU* cpu, u16 address)
@@ -24,7 +23,9 @@ void MemWriteShort(CPU* cpu, u16 addr, u16 val)
 
 void IncReg(CPU* cpu, u8* reg)
 {
-	*reg++;//tODO : CHECK
+	//*reg++;//tODO : CHECK
+	//reg++;
+	*reg += 1;
 	cpu->registers.negative = 0;
 
 	if (cpu->registers.B)
@@ -38,35 +39,7 @@ void IncReg(CPU* cpu, u8* reg)
 		cpu->registers.halfCarry = 0;
 }
 
-u8 ins_nop(CPU* cpu);
-u8 ins_0x01(CPU *cpu);
-u8 ins_0x02(CPU *cpu);
-u8 ins_0x03(CPU* cpu);
-u8 ins_0x04(CPU* cpu);
-u8 ins_0x05(CPU *cpu);
-u8 ins_0x06(CPU* cpu);
-u8 ins_0x07(CPU* cpu);
-u8 ins_0x08(CPU* cpu);
-u8 ins_0x09(CPU* cpu);
-u8 ins_0x0A(CPU* cpu);
-u8 ins_0x0B(CPU* cpu);
-u8 ins_0x0C(CPU* cpu);
 
-u8 ins_0x18(CPU* cpu);
-
-u8 ins_0x3E(CPU* cpu);
-
-u8 ins_0xAF(CPU* cpu);
-
-u8 ins_0xC3(CPU* cpu);
-
-u8 ins_0xCD(CPU* cpu);
-
-u8 ins_0xEA(CPU* cpu);
-
-u8 ins_0xF3(CPU* cpu);
-
-u8 ins_0xFE(CPU* cpu);
 //Do a thing :D
 u8 ins_nop(CPU *cpu)
 {
@@ -158,7 +131,7 @@ u8 ins_0x09(CPU* cpu)
 
 	cpu->registers.HL = cpu->registers.BC;
 
-	cpu->registers.halfCarry = (cpu->registers.HL & 0xF + cpu->registers.BC & 0xF) > 0xF;
+	cpu->registers.halfCarry = (((cpu->registers.HL & 0xF) + (cpu->registers.BC & 0xF)) > 0xF);
 
 	cpu->registers.negative = 0;
 	return 0;
@@ -204,6 +177,21 @@ u8 ins_0x18(CPU* cpu)
 	return 0;
 }
 
+//JR NZ,r8
+u8 ins_0x20(CPU* cpu)
+{
+	//todo do stuff
+
+	//return  4;
+	return 0;
+}
+
+u8 ins_0x21(CPU* cpu)
+{
+	cpu->registers.HL = ReadNextShort(cpu);
+	return 0;
+}
+
 u8 ins_0x28(CPU* cpu)
 {
 	if ( ! cpu->registers.F) {
@@ -213,9 +201,31 @@ u8 ins_0x28(CPU* cpu)
 	return 0;
 }
 
+//LD SP,d16
+u8 ins_0x31(CPU* cpu)
+{
+	cpu->registers.SP = ReadNextShort(cpu);
+	return 0;
+}
+
+//"LD (HL-),A
+u8 ins_0x32(CPU* cpu)
+{
+	cpu->memory[cpu->registers.HL] = cpu->registers.A;
+	cpu->registers.HL--;
+	return 0;
+}
+
 u8 ins_0x3E(CPU* cpu)
 {
 	cpu->registers.A = cpu->memory[cpu->registers.PC];
+	return 0;
+}
+
+//LD B,A 1, 4
+u8 ins_0x47(CPU* cpu)
+{
+	cpu->registers.B = cpu->registers.A;
 	return 0;
 }
 
@@ -235,23 +245,22 @@ u8 ins_0xCD(CPU* cpu)
 	return 0;
 }
 
-u8 ins_0xFE(CPU* cpu)
-{
-	cpu->registers.zero = (cpu->registers.A == cpu->memory[cpu->registers.PC]);
-	cpu->registers.carry = (cpu->memory[cpu->registers.PC] > cpu->registers.A);
-	cpu->registers.halfCarry = ((cpu->memory[cpu->registers.PC] & 0x0F) > (cpu->registers.A & 0x0F));
-	cpu->registers.negative = 1;
-	return 0;
-}
+
 
 // XOR A
 u8 ins_0xAF(CPU* cpu)
 {
 
 	cpu->registers.carry = cpu->registers.halfCarry = cpu->registers.negative = cpu->registers.zero = 0;
-	cpu->registers.A ^= cpu->registers.A;
-	if (cpu->registers.A)
+	//cpu->registers.A ^= cpu->registers.A;
+	cpu->registers.A = 0;
 		cpu->registers.zero = 1;
+	return 0;
+}
+
+u8 ins_0xE0(CPU* cpu)
+{
+	MemWriteShort(cpu, cpu->memory[cpu->registers.PC] + 0xFF00, cpu->registers.A);
 	return 0;
 }
 
@@ -262,6 +271,17 @@ u8 ins_0xEA(CPU* cpu)
 	return 0;
 }
 
+
+
+
+
+//LD A,($FF00+a8)
+u8 ins_0xF0(CPU* cpu)
+{
+	cpu->registers.A = cpu->memory[0xFF00 + ReadNext(cpu)];
+	return 0;
+}
+
 u8 ins_0xF3(CPU* cpu)
 {
 
@@ -269,9 +289,12 @@ u8 ins_0xF3(CPU* cpu)
 	return 0;
 }
 
-u8 ins_0xE0(CPU* cpu)
+u8 ins_0xFE(CPU* cpu)
 {
-	MemWriteShort(cpu, cpu->memory[cpu->registers.PC] + 0xFF00, cpu->registers.A);
+	cpu->registers.zero = (cpu->registers.A == cpu->memory[cpu->registers.PC]);
+	cpu->registers.carry = (cpu->memory[cpu->registers.PC] > cpu->registers.A);
+	cpu->registers.halfCarry = ((cpu->memory[cpu->registers.PC] & 0x0F) > (cpu->registers.A & 0x0F));
+	cpu->registers.negative = 1;
 	return 0;
 }
 
@@ -293,13 +316,27 @@ const INSTRUCTION instructions[256] = {
 	{},{},{},{},{},{},{},{},
 	{"JR r8", 2, 12, ins_0x18},
 	{},{},{},{},{},{},{},
-	{},{},{},{},{},{},{},{},
+
+
+	{"JR NZ,r8", 2, 8, ins_0x20},
+	{"LD HL,d16", 3, 12, ins_0x21},
+	{},{},{},{},{},{},
 	{"JR Z,r8", 2, 8, ins_0x28},{},{},{},{},{},{},{},//2
-	{},{},{},{},{},{},{},{},{},{},{},{},{},{},
+
+	//3
+	{},
+	{"LD SP,d16", 3, 12, ins_0x31},
+	{"LD (HL-),A", 1, 8, ins_0x32},
+	{},{},{},{},{},{},{},{},{},{},{},
 	{"LD A,d8", 2, 8, ins_0x3E},
 	{},//3
-	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//4
-	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},
+
+	//4
+	{},
+	{},{},{},{},{},{},
+	{"LD B,A", 1, 4, ins_0x47},
+	{},{},{},{},{},{},{},{},//4
+	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//5
 	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//6
 	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},
 	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},
@@ -308,16 +345,61 @@ const INSTRUCTION instructions[256] = {
 	{"XOR A", 1, 4, ins_0xAF},//A
 	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//B
 	{},{},{},
-	{"JP a16", 3, 26, ins_0xC3},{},{},{},{},{},{},{},{},{},
+	{"JP a16", 3, 26, ins_0xC3},{},{},{},{},{},{},{},
+	{"PREFIX CB", 1, 4, ins_nop}, //nope ;3
+	{},
 	{"CALL a16", 3, 24, ins_0xCD},
 	{},{},//C
 	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//D
 	{"LDH (a8),A", 2, 12, ins_0xE0},{},{},{},{},{},{},{},{},{},
 	{"LD (a16),A", 3, 16, ins_0xEA},{},{},{},{},{},//E
-	{},{},{},
+	{"LDH A,(a8)", 2, 12, ins_0xF0},
+	{},{},
 	{"DI", 1, 4, ins_0xF3},{},{},{},{},{},{},{},{},{},{},
 	{"CP d8", 2, 8, ins_0xFE},
 	{},//F
+
+};
+
+
+u8 ins_0xCB7C(CPU* cpu)
+{
+	cpu->registers.halfCarry = 1;
+	cpu->registers.negative = 0;
+
+	if (cpu->registers.H & (1 << 7))
+		cpu->registers.zero = 1;
+	else
+		cpu->registers.zero = 0;
+	cpu->registers.H = cpu->registers.H & (1 << 7);
+
+
+	return 0;
+}
+
+const INSTRUCTION instructionsCB[256] = {
+	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//0
+	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//1
+	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//2
+	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//3
+	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//4
+	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//5
+	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//6
+
+
+	{},{},{},{},{},{},{},{},{},{},{},{},
+	{"BIT 7,H", 2, 8, ins_0xCB7C},
+	{},{},{},//7
+
+
+	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//8
+	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//9
+	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//A
+	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//B
+	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//C
+	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//D
+	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//E
+	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//F
 
 };
 
@@ -327,9 +409,22 @@ u8 CPU_Execute(CPU* cpu)
 	const u16 cPC = cpu->registers.PC;
 	//printf("%d", instructions[cpu->memory[cPC]].length);
 	//printf("0x%04x", ReadNextShort(cpu));
-	u8 cycles = instructions[cpu->memory[cpu->registers.PC++]].exc(cpu);
-	cpu->registers.PC += instructions[cpu->memory[cPC]].length - 1;
-	return instructions[cpu->memory[cPC]].cycles + cycles;
+	u8 opcode = cpu->memory[cpu->registers.PC];
+	u8 cycles = 0;
+
+	if (opcode == 0xCB) {
+		cpu->registers.PC++;
+		cycles = instructionsCB[cpu->memory[cpu->registers.PC++]].exc(cpu);
+
+		//cpu->registers.PC++;
+		return instructionsCB[cpu->memory[cPC]].cycles + cycles;
+	} else {
+		cycles = instructions[cpu->memory[cpu->registers.PC++]].exc(cpu);
+		cpu->registers.PC += instructions[cpu->memory[cPC]].length - 1;
+		return instructions[cpu->memory[cPC]].cycles + cycles;
+	}
+
+
 }
 
 CPU* CPU_Create()

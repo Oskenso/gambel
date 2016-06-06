@@ -6,7 +6,7 @@
 
 QT       -= core gui
 
-TARGET = libgambel
+TARGET = gambel
 
 TEMPLATE = lib
 
