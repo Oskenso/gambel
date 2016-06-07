@@ -181,9 +181,13 @@ u8 ins_0x18(CPU* cpu)
 u8 ins_0x20(CPU* cpu)
 {
 	//todo do stuff
+	if (cpu->registers.zero == 0)
+		return 0;
+
+	cpu->registers.PC += ReadNext(cpu);
 
 	//return  4;
-	return 0;
+	return 4;
 }
 
 u8 ins_0x21(CPU* cpu)
@@ -432,11 +436,18 @@ CPU* CPU_Create()
 	CPU *cpu = malloc(sizeof(CPU));
 	cpu->memory = malloc(sizeof(u8) * (64 * 1024));
 
+	/*
 	cpu->registers.AF = 0x01B0;
 	cpu->registers.BC = 0x0013;
 	cpu->registers.HL = 0x014D;
 	cpu->registers.SP = 0xFFFE;
 	cpu->registers.PC = 0x0100;
+	*/
+	cpu->registers.AF = 0;
+	cpu->registers.BC = 0;
+	cpu->registers.HL = 0;
+	cpu->registers.SP = 0;
+	cpu->registers.PC = 0;
 
 	return cpu;
 }

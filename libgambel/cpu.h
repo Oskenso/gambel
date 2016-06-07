@@ -13,11 +13,31 @@ typedef struct {
 				union {
 					u8 F;
 					struct {
+						/*
 						u8 unused: 4;
 						u8 zero: 1;
 						u8 negative: 1;
 						u8 halfCarry: 1;
 						u8 carry: 1;
+						*/
+						//1
+						//2
+						//4
+						//8
+						//16
+						//32
+						//64
+						//128
+						u8 unused: 4;
+						u8 carry: 1;
+						u8 halfCarry: 1;
+						u8 negative: 1;
+						u8 zero: 1;
+
+
+
+
+
 
 					};
 				};
