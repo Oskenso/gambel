@@ -62,17 +62,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	char f[6];
 
-	for (int i = 0; i < 31; i++)
+	for (int i = 0; i < 0xFFFF; i++)
 	{
-		sprintf(f, "Opcode: 0x%02x", gambel->cpu->memory[gambel->cpu->registers.PC]);
-		qDebug() << f;
-		sprintf(f, "Opcode: 0x%02x", gambel->cpu->memory[gambel->cpu->registers.PC+1]);
+		REGISTERS *reg = &gambel->cpu->registers;
+		sprintf(f, "PC %04x: 0x%02x", reg->PC, gambel->cpu->memory[gambel->cpu->registers.PC]);
 		qDebug() << f;
 
-		sprintf(f, "PC: 0x%04x", gambel->cpu->registers.PC);
+		sprintf(f, "{SP: %02x; A: %02x; F: %02x; AF: %04x; B: %02x; C: %02x; BC: %04x; D: %02x; E: %02x; DE: %04x; H: %02x; L: %02x; HL: %04x;}\n",
+				reg->SP, reg->A, reg->F, reg->AF, reg->B, reg->C, reg->BC, reg->D, reg->E, reg->DE, reg->H, reg->L, reg->HL);
 		qDebug() << f;
-		qDebug() << GB_Step(gambel);
-		qDebug() << "\n";
+		GB_Step(gambel);
 	}
 
 

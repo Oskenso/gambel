@@ -153,7 +153,17 @@ u8 ins_0x0B(CPU* cpu)
 
 u8 ins_0x0C(CPU* cpu)
 {
+	if ((cpu->registers.C & 0x0F) == 0x0F)
+		cpu->registers.halfCarry = 1;
+	else
+		cpu->registers.halfCarry = 0;
+
 	cpu->registers.C++;
+	if (cpu->registers.C)
+		cpu->registers.zero = 0;
+	else
+		cpu->registers.zero = 1;
+	cpu->registers.negative = 0;
 	return 0;
 }
 
@@ -181,10 +191,10 @@ u8 ins_0x18(CPU* cpu)
 u8 ins_0x20(CPU* cpu)
 {
 	//todo do stuff
-	if (cpu->registers.zero == 0)
+	if (cpu->registers.zero == 1)
 		return 0;
 
-	cpu->registers.PC += ReadNext(cpu);
+	cpu->registers.PC += (int8_t) ReadNext(cpu);
 
 	//return  4;
 	return 4;
@@ -255,16 +265,23 @@ u8 ins_0xCD(CPU* cpu)
 u8 ins_0xAF(CPU* cpu)
 {
 
-	cpu->registers.carry = cpu->registers.halfCarry = cpu->registers.negative = cpu->registers.zero = 0;
+	cpu->registers.carry = cpu->registers.halfCarry = cpu->registers.negative = 0;
 	//cpu->registers.A ^= cpu->registers.A;
 	cpu->registers.A = 0;
-		cpu->registers.zero = 1;
+	cpu->registers.zero = 1;
 	return 0;
 }
 
 u8 ins_0xE0(CPU* cpu)
 {
 	MemWriteShort(cpu, cpu->memory[cpu->registers.PC] + 0xFF00, cpu->registers.A);
+	return 0;
+}
+
+//LD (C),A
+u8 ins_0xE2(CPU* cpu)
+{
+	cpu->memory[0xff00 + cpu->registers.C] = cpu->registers.A;
 	return 0;
 }
 
@@ -316,7 +333,9 @@ const INSTRUCTION instructions[256] = {
 	{"LD A, BC", 1, 8, ins_0x0A},
 	{"DEC BC", 1, 8, ins_0x0B},
 	{"INC C", 1, 4, ins_0x0C},
-	{},{},{},
+	{},
+	{"LD C,d8", 2, 8, ins_0x0E},
+	{},
 	{},{},{},{},{},{},{},{},
 	{"JR r8", 2, 12, ins_0x18},
 	{},{},{},{},{},{},{},
@@ -355,7 +374,12 @@ const INSTRUCTION instructions[256] = {
 	{"CALL a16", 3, 24, ins_0xCD},
 	{},{},//C
 	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//D
-	{"LDH (a8),A", 2, 12, ins_0xE0},{},{},{},{},{},{},{},{},{},
+
+
+	{"LDH (a8),A", 2, 12, ins_0xE0},
+	{},
+	{"LD (C),A", 1, 8, ins_0xE2},
+	{},{},{},{},{},{},{},
 	{"LD (a16),A", 3, 16, ins_0xEA},{},{},{},{},{},//E
 	{"LDH A,(a8)", 2, 12, ins_0xF0},
 	{},{},
@@ -371,11 +395,7 @@ u8 ins_0xCB7C(CPU* cpu)
 	cpu->registers.halfCarry = 1;
 	cpu->registers.negative = 0;
 
-	if (cpu->registers.H & (1 << 7))
-		cpu->registers.zero = 1;
-	else
-		cpu->registers.zero = 0;
-	cpu->registers.H = cpu->registers.H & (1 << 7);
+	cpu->registers.zero = ((cpu->registers.H & 128) == 0);
 
 
 	return 0;
@@ -445,6 +465,7 @@ CPU* CPU_Create()
 	*/
 	cpu->registers.AF = 0;
 	cpu->registers.BC = 0;
+	cpu->registers.DE = 0;
 	cpu->registers.HL = 0;
 	cpu->registers.SP = 0;
 	cpu->registers.PC = 0;
