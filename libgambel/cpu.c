@@ -25,6 +25,7 @@ void IncReg(CPU* cpu, u8* reg)
 {
 	//*reg++;//tODO : CHECK
 	//reg++;
+	/*
 	*reg += 1;
 	cpu->registers.negative = 0;
 
@@ -36,7 +37,19 @@ void IncReg(CPU* cpu, u8* reg)
 	if ((cpu->registers.B & 0xF) == 0xF)
 		cpu->registers.halfCarry = 1;
 	else
+		cpu->registers.halfCarry = 0;*/
+
+	if ((*reg & 0x0F) == 0x0F)
+		cpu->registers.halfCarry = 1;
+	else
 		cpu->registers.halfCarry = 0;
+
+	(*reg)++;
+	if (*reg)
+		cpu->registers.zero = 0;
+	else
+		cpu->registers.zero = 1;
+	cpu->registers.negative = 0;
 }
 
 
@@ -153,6 +166,8 @@ u8 ins_0x0B(CPU* cpu)
 
 u8 ins_0x0C(CPU* cpu)
 {
+	IncReg(cpu, &cpu->registers.C);
+	/*
 	if ((cpu->registers.C & 0x0F) == 0x0F)
 		cpu->registers.halfCarry = 1;
 	else
@@ -164,6 +179,7 @@ u8 ins_0x0C(CPU* cpu)
 	else
 		cpu->registers.zero = 1;
 	cpu->registers.negative = 0;
+	*/
 	return 0;
 }
 
