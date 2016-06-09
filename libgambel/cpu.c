@@ -15,6 +15,7 @@ u16 MemReadShort(CPU* cpu, u16 address)
 	return (cpu->memory[address] | (cpu->memory[address + 1] << 8));
 }
 
+
 void MemWriteShort(CPU* cpu, u16 addr, u16 val)
 {
 	cpu->memory[addr] = (val & 0xFF);
@@ -196,10 +197,23 @@ u8 ins_0x0E(CPU* cpu)
 	return 0;
 }
 
+//LD DE,d16
+u8 ins_0x11(CPU* cpu)
+{
+	cpu->registers.DE = ReadNextShort(cpu);
+	return 0;
+}
+
 u8 ins_0x18(CPU* cpu)
 {
 	cpu->registers.PC += cpu->memory[cpu->registers.PC];
-	//cpu->registers.PC -= 2;
+	return 0;
+}
+
+//LD A,(DE)
+u8 ins_0x1A(CPU* cpu)
+{
+	cpu->registers.A = MemReadShort(cpu, cpu->registers.DE);
 	return 0;
 }
 
@@ -219,6 +233,34 @@ u8 ins_0x20(CPU* cpu)
 u8 ins_0x21(CPU* cpu)
 {
 	cpu->registers.HL = ReadNextShort(cpu);
+	return 0;
+}
+
+u8 ins_0x27(CPU* cpu)
+{
+	u16 s = cpu->registers.A;
+
+	if(cpu->registers.negative) {
+		if(cpu->registers.halfCarry) s = (s - 0x06)&0xFF;
+		if(cpu->registers.carry) s -= 0x60;
+	}
+	else {
+		if(cpu->registers.halfCarry || (s & 0xF) > 9) s += 0x06;
+		if(cpu->registers.carry || s > 0x9F) s += 0x60;
+	}
+
+	cpu->registers.A = s;
+	cpu->registers.halfCarry = 0;
+
+	if(cpu->registers.A)
+		cpu->registers.zero = 0;
+	else
+		cpu->registers.zero = 1;
+
+	if(s >= 0x100)
+		cpu->registers.carry = 1;
+
+
 	return 0;
 }
 
@@ -259,6 +301,20 @@ u8 ins_0x47(CPU* cpu)
 	return 0;
 }
 
+//LD C,A
+u8 ins_0x4F(CPU* cpu)
+{
+	cpu->registers.C = cpu->registers.A;
+	return 0;
+}
+
+//LD (HL),A
+u8 ins_0x77(CPU* cpu)
+{
+	cpu->memory[cpu->registers.HL] = cpu->registers.A;
+	return 0;
+}
+
 u8 ins_0xC3(CPU* cpu)
 {
 	cpu->registers.PC = ReadNextShort(cpu);
@@ -266,12 +322,25 @@ u8 ins_0xC3(CPU* cpu)
 	return 0;
 }
 
+//PUSH BC
+u8 ins_0xC5(CPU* cpu)
+{
+	cpu->registers.SP -= 2;
+	MemWriteShort(cpu, cpu->registers.SP, cpu->registers.BC);
+	return 0;
+}
+
 u8 ins_0xCD(CPU* cpu)
 {
 	//cpu->registers.SP;
-	cpu->registers.SP = cpu->registers.PC - 2;
+	cpu->registers.SP -= 2;
+	MemWriteShort(cpu, cpu->registers.SP, cpu->memory[cpu->registers.PC]);
 	cpu->registers.PC = cpu->memory[cpu->registers.PC];
 	cpu->registers.PC -= 2;
+	/*cpu->registers.SP = cpu->registers.PC - 2;
+	cpu->registers.PC = cpu->memory[cpu->registers.PC];
+	cpu->registers.PC -= 2;
+	*/
 	return 0;
 }
 
@@ -352,15 +421,28 @@ const INSTRUCTION instructions[256] = {
 	{},
 	{"LD C,d8", 2, 8, ins_0x0E},
 	{},
-	{},{},{},{},{},{},{},{},
+
+	{},
+	{"LD DE,d16", 3, 12, ins_0x11},
+	{},{},{},{},{},{},
 	{"JR r8", 2, 12, ins_0x18},
-	{},{},{},{},{},{},{},
+	{},
+	{"LD A,(DE)", 1, 8, ins_0x1A},
+	{},{},{},{},{},
 
 
 	{"JR NZ,r8", 2, 8, ins_0x20},
 	{"LD HL,d16", 3, 12, ins_0x21},
-	{},{},{},{},{},{},
-	{"JR Z,r8", 2, 8, ins_0x28},{},{},{},{},{},{},{},//2
+	{},{},{},{},{},
+	{"DAA", 1, 4, ins_0x27},
+	{"JR Z,r8", 2, 8, ins_0x28},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},//2
 
 	//3
 	{},
@@ -374,17 +456,33 @@ const INSTRUCTION instructions[256] = {
 	{},
 	{},{},{},{},{},{},
 	{"LD B,A", 1, 4, ins_0x47},
-	{},{},{},{},{},{},{},{},//4
+	{},{},{},{},{},{},{},
+	{"LD C,A", 1, 4, ins_0x4F},//4
+
 	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//5
 	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//6
-	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},
+
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{},
+	{"LD (HL),A", 1, 8, ins_0x77},
+	{},
+	{},{},{},{},{},{},{},
+
 	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},
 	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},
 	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//A
 	{"XOR A", 1, 4, ins_0xAF},//A
 	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//B
 	{},{},{},
-	{"JP a16", 3, 26, ins_0xC3},{},{},{},{},{},{},{},
+	{"JP a16", 3, 26, ins_0xC3},
+	{},
+	{"PUSH BC", 1, 16, ins_0xC5},
+	{},{},{},{},{},
 	{"PREFIX CB", 1, 4, ins_nop}, //nope ;3
 	{},
 	{"CALL a16", 3, 24, ins_0xCD},
@@ -406,6 +504,47 @@ const INSTRUCTION instructions[256] = {
 };
 
 
+//RL C
+u8 ins_0xCB11(CPU* cpu)
+{
+	/*
+	$newFCarry = (($core->registerC & 0x80) == 0x80);
+			$core->registerC = (($core->registerC << 1) & 0xFF) + (($core->FCarry) ? 1 : 0);
+			$core->FCarry = $newFCarry;
+			$core->FHalfCarry = $core->FSubtract = false;
+			$core->FZero = ($core->registerC == 0);
+
+
+			int carry = FLAGS_ISSET(FLAGS_CARRY) ? 1 : 0;
+
+				if(value & 0x80) FLAGS_SET(FLAGS_CARRY);
+				else FLAGS_CLEAR(FLAGS_CARRY);
+
+				value <<= 1;
+				value += carry;
+
+				if(value) FLAGS_CLEAR(FLAGS_ZERO);
+				else FLAGS_SET(FLAGS_ZERO);
+
+				FLAGS_CLEAR(FLAGS_NEGATIVE | FLAGS_HALFCARRY);
+
+				return value;
+				*/
+	u8 carry = cpu->registers.carry;
+	if (cpu->registers.C & 0x80)
+		cpu->registers.carry = 1;
+	cpu->registers.C <<= 1;
+	cpu->registers.C += carry;
+	if (cpu->registers.C)
+		cpu->registers.zero = 0;
+	else
+		cpu->registers.zero = 1;
+	cpu->registers.negative = cpu->registers.halfCarry = 0;
+
+
+	return 0;
+}
+
 u8 ins_0xCB7C(CPU* cpu)
 {
 	cpu->registers.halfCarry = 1;
@@ -419,7 +558,9 @@ u8 ins_0xCB7C(CPU* cpu)
 
 const INSTRUCTION instructionsCB[256] = {
 	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//0
-	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//1
+	{},
+	{"RL C", 2, 8, ins_0xCB11},
+	{},{},{},{},{},{},{},{},{},{},{},{},{},{},//1
 	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//2
 	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//3
 	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//4

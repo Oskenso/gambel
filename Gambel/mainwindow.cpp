@@ -38,13 +38,17 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 	QString fileName = QFileDialog::getOpenFileName(this, tr("Open Rom"), "/home/oskenso/Downloads/", "*.*");
+	qDebug() << fileName;
 
 	QFile file(fileName);
 	if (file.open(QIODevice::ReadOnly)) {
 		QByteArray dataFile = file.readAll();
 
-		GB_LoadRom(gambel, (uint8_t*)dataFile.data());
 
+		GB_LoadRom(gambel, (uint8_t*) dataFile.constData(), dataFile.size());
+		//memcpy(&gambel->cpu->memory[0x100], dataFile.data(), 0x8000);
+		qDebug() << gambel->cpu->memory[0x104];
+		//qDebug() << dataFile;
 
 	}
 
@@ -60,7 +64,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	//qDebug() << QString("0x%04x").arg(gambel->cpu->memory[gambel->cpu->registers.PC]);
 
-	char f[6];
+	char f[300];
+
+
 
 	for (int i = 0; i < 0xFFFF; i++)
 	{
@@ -70,6 +76,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 		sprintf(f, "{SP: %02x; A: %02x; F: %02x; AF: %04x; B: %02x; C: %02x; BC: %04x; D: %02x; E: %02x; DE: %04x; H: %02x; L: %02x; HL: %04x;}\n",
 				reg->SP, reg->A, reg->F, reg->AF, reg->B, reg->C, reg->BC, reg->D, reg->E, reg->DE, reg->H, reg->L, reg->HL);
+
 		qDebug() << f;
 		GB_Step(gambel);
 	}

@@ -24,7 +24,7 @@ typedef struct {
 
 EXPORT GB* GB_Create();
 EXPORT void GB_Destroy(GB* gb);
-EXPORT void GB_LoadRom(GB* gb, uint8_t *romData);
+EXPORT void GB_LoadRom(GB* gb, uint8_t *romData, int size);
 EXPORT u8 GB_Step(GB* gb);
 
 #ifdef __cplusplus
