@@ -68,7 +68,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 
-	for (int i = 0; i < 0xFFFF; i++)
+    for (int i = 0; i < 0x6320; i++)
 	{
 		REGISTERS *reg = &gambel->cpu->registers;
 		sprintf(f, "PC %04x: 0x%02x", reg->PC, gambel->cpu->memory[gambel->cpu->registers.PC]);

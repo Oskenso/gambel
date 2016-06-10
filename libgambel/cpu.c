@@ -204,6 +204,23 @@ u8 ins_0x11(CPU* cpu)
 	return 0;
 }
 
+
+//RLA
+u8 ins_0x17(CPU* cpu)
+{
+
+    u8 carry = cpu->registers.carry;
+    if (cpu->registers.A & 0x80)
+        cpu->registers.carry = 1;
+    cpu->registers.A <<= 1;
+    cpu->registers.A += carry;
+
+
+    cpu->registers.negative = cpu->registers.zero = cpu->registers.halfCarry = 0;
+
+    return 0;
+}
+
 u8 ins_0x18(CPU* cpu)
 {
 	cpu->registers.PC += cpu->memory[cpu->registers.PC];
@@ -213,7 +230,7 @@ u8 ins_0x18(CPU* cpu)
 //LD A,(DE)
 u8 ins_0x1A(CPU* cpu)
 {
-	cpu->registers.A = MemReadShort(cpu, cpu->registers.DE);
+    cpu->registers.A = cpu->memory[cpu->registers.DE];
 	return 0;
 }
 
@@ -249,7 +266,7 @@ u8 ins_0x27(CPU* cpu)
 		if(cpu->registers.carry || s > 0x9F) s += 0x60;
 	}
 
-	cpu->registers.A = s;
+    cpu->registers.A = s & 0xFF;
 	cpu->registers.halfCarry = 0;
 
 	if(cpu->registers.A)
@@ -404,6 +421,12 @@ u8 ins_0xFE(CPU* cpu)
 	return 0;
 }
 
+u8 ins_crash(CPU* cpu)
+{
+    exit(EXIT_FAILURE);
+    return 0;
+}
+
 const INSTRUCTION instructions[256] = {
 	{"NOP", 1, 4, ins_nop},
 	{"LD BC, 0x%04x", 3, 12, ins_0x01},
@@ -418,88 +441,305 @@ const INSTRUCTION instructions[256] = {
 	{"LD A, BC", 1, 8, ins_0x0A},
 	{"DEC BC", 1, 8, ins_0x0B},
 	{"INC C", 1, 4, ins_0x0C},
-	{},
-	{"LD C,d8", 2, 8, ins_0x0E},
-	{},
+    {"", 0, 0, ins_crash},
 
-	{},
+	{"LD C,d8", 2, 8, ins_0x0E},
+    {"", 0, 0, ins_crash},
+
+
+    {"", 0, 0, ins_crash},
+
 	{"LD DE,d16", 3, 12, ins_0x11},
-	{},{},{},{},{},{},
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+    {"RLA", 1, 4, ins_0x17},
 	{"JR r8", 2, 12, ins_0x18},
-	{},
+    {"", 0, 0, ins_crash},
+
 	{"LD A,(DE)", 1, 8, ins_0x1A},
-	{},{},{},{},{},
+    {"", 0, 0, ins_crash},
+    {"", 0, 0, ins_crash},
+    {"", 0, 0, ins_crash},
+    {"", 0, 0, ins_crash},
+    {"", 0, 0, ins_crash},
+
 
 
 	{"JR NZ,r8", 2, 8, ins_0x20},
 	{"LD HL,d16", 3, 12, ins_0x21},
-	{},{},{},{},{},
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+
 	{"DAA", 1, 4, ins_0x27},
 	{"JR Z,r8", 2, 8, ins_0x28},
-	{},
-	{},
-	{},
-	{},
-	{},
-	{},
-	{},//2
+    {"", 0, 0, ins_crash},
+
+    {"", 0, 0, ins_crash},
+
+    {"", 0, 0, ins_crash},
+
+    {"", 0, 0, ins_crash},
+
+    {"", 0, 0, ins_crash},
+
+    {"", 0, 0, ins_crash},
+
+    {"", 0, 0, ins_crash},
+//2
 
 	//3
-	{},
+    {"", 0, 0, ins_crash},
+
 	{"LD SP,d16", 3, 12, ins_0x31},
 	{"LD (HL-),A", 1, 8, ins_0x32},
-	{},{},{},{},{},{},{},{},{},{},{},
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+
 	{"LD A,d8", 2, 8, ins_0x3E},
-	{},//3
+    {"", 0, 0, ins_crash},
+//3
 
 	//4
-	{},
-	{},{},{},{},{},{},
+    {"", 0, 0, ins_crash},
+
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+
 	{"LD B,A", 1, 4, ins_0x47},
-	{},{},{},{},{},{},{},
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+
 	{"LD C,A", 1, 4, ins_0x4F},//4
 
-	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//5
-	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//6
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+//5
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+//6
 
-	{},
-	{},
-	{},
-	{},
-	{},
-	{},
-	{},
+    {"", 0, 0, ins_crash},
+
+    {"", 0, 0, ins_crash},
+
+    {"", 0, 0, ins_crash},
+
+    {"", 0, 0, ins_crash},
+
+    {"", 0, 0, ins_crash},
+
+    {"", 0, 0, ins_crash},
+
+    {"", 0, 0, ins_crash},
+
 	{"LD (HL),A", 1, 8, ins_0x77},
-	{},
-	{},{},{},{},{},{},{},
+    {"", 0, 0, ins_crash},
 
-	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},
-	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},
-	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//A
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+
+
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+//A
 	{"XOR A", 1, 4, ins_0xAF},//A
-	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//B
-	{},{},{},
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+//B
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+
 	{"JP a16", 3, 26, ins_0xC3},
-	{},
+    {"", 0, 0, ins_crash},
+
 	{"PUSH BC", 1, 16, ins_0xC5},
-	{},{},{},{},{},
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+
 	{"PREFIX CB", 1, 4, ins_nop}, //nope ;3
-	{},
+    {"", 0, 0, ins_crash},
+
 	{"CALL a16", 3, 24, ins_0xCD},
-	{},{},//C
-	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//D
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+//C
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+//D
 
 
 	{"LDH (a8),A", 2, 12, ins_0xE0},
-	{},
+    {"", 0, 0, ins_crash},
+
 	{"LD (C),A", 1, 8, ins_0xE2},
-	{},{},{},{},{},{},{},
-	{"LD (a16),A", 3, 16, ins_0xEA},{},{},{},{},{},//E
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+
+    {"LD (a16),A", 3, 16, ins_0xEA},{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+//E
 	{"LDH A,(a8)", 2, 12, ins_0xF0},
-	{},{},
-	{"DI", 1, 4, ins_0xF3},{},{},{},{},{},{},{},{},{},{},
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+
+    {"DI", 1, 4, ins_0xF3},{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+
 	{"CP d8", 2, 8, ins_0xFE},
-	{},//F
+    {"", 0, 0, ins_crash},
+//F
 
 };
 
@@ -557,30 +797,284 @@ u8 ins_0xCB7C(CPU* cpu)
 }
 
 const INSTRUCTION instructionsCB[256] = {
-	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//0
-	{},
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+//0
+    {"", 0, 0, ins_crash},
+
 	{"RL C", 2, 8, ins_0xCB11},
-	{},{},{},{},{},{},{},{},{},{},{},{},{},{},//1
-	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//2
-	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//3
-	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//4
-	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//5
-	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//6
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+//1
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+//2
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+//3
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+//4
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+//5
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+//6
 
 
-	{},{},{},{},{},{},{},{},{},{},{},{},
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+
 	{"BIT 7,H", 2, 8, ins_0xCB7C},
-	{},{},{},//7
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+//7
 
 
-	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//8
-	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//9
-	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//A
-	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//B
-	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//C
-	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//D
-	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//E
-	{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},//F
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+//8
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+//9
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+//A
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+//B
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+//C
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+//D
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+//E
+    {"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+{"", 0, 0, ins_crash},
+//F
 
 };
 

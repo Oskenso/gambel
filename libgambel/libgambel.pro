@@ -27,3 +27,5 @@ unix {
 }
 
 QMAKE_CFLAGS += -march=native
+
+CONFIG += staticlib
