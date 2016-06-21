@@ -761,6 +761,16 @@ const INSTRUCTION instructions[256] = {
 u8 ins_0xCB11(CPU* cpu)
 {
 
+    u8 carry = ((cpu->registers.C & 0x80) == 0x80);
+    //u8 carry = cpu->registers.carry;
+    cpu->registers.carry = (cpu->registers.C & 0x80);
+
+    cpu->registers.C <<= 1;
+    cpu->registers.C += cpu->registers.carry;
+    cpu->registers.carry = carry;
+    cpu->registers.zero = (cpu->registers.C == 0);
+
+    /*
 	u8 carry = cpu->registers.carry;
 	if (cpu->registers.C & 0x80)
 		cpu->registers.carry = 1;
@@ -770,6 +780,7 @@ u8 ins_0xCB11(CPU* cpu)
 		cpu->registers.zero = 0;
 	else
 		cpu->registers.zero = 1;
+    */
 	cpu->registers.negative = cpu->registers.halfCarry = 0;
 
 

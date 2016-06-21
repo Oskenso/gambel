@@ -4,14 +4,15 @@
 #include "qdebug.h"
 
 #include <QFileDialog>
-
+#include <string.h>
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::MainWindow)
 {
-	ui->setupUi(this);
-	GB* gambel = GB_Create();
+    ui->setupUi(this);
+
+    gambel = GB_Create();
 
 	u8 dmg_bios[0x100] = {
 	//QByteArray dmgBios[0x100] = {
@@ -52,7 +53,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	}
 
-#include <string.h>
+
 	//sprintf(stest, "0x%02x", gambel->cpu->memory[0x100]);
 
 	//qDebug() << sprintf("0x%04x", gambel->cpu->memory[0x100]);
@@ -64,31 +65,52 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	//qDebug() << QString("0x%04x").arg(gambel->cpu->memory[gambel->cpu->registers.PC]);
 
-	char f[300];
+
 
 
 
     for (int i = 0; i < 0x6320; i++)
 	{
-		REGISTERS *reg = &gambel->cpu->registers;
-		sprintf(f, "PC %04x: 0x%02x", reg->PC, gambel->cpu->memory[gambel->cpu->registers.PC]);
-		qDebug() << f;
 
-		sprintf(f, "{SP: %02x; A: %02x; F: %02x; AF: %04x; B: %02x; C: %02x; BC: %04x; D: %02x; E: %02x; DE: %04x; H: %02x; L: %02x; HL: %04x;}\n",
-				reg->SP, reg->A, reg->F, reg->AF, reg->B, reg->C, reg->BC, reg->D, reg->E, reg->DE, reg->H, reg->L, reg->HL);
-
-		qDebug() << f;
-		GB_Step(gambel);
 	}
 
 
 
 
 
-	GB_Destroy(gambel);
+
 }
 
 MainWindow::~MainWindow()
 {
+    GB_Destroy(gambel);
 	delete ui;
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    char f[300];
+    REGISTERS *reg = &gambel->cpu->registers;
+
+    sprintf(f, "{PC %04x: 0x%02x SP: %02x; A: %02x; F: %02x; AF: %04x; B: %02x; C: %02x; BC: %04x; D: %02x; E: %02x; DE: %04x; H: %02x; L: %02x; HL: %04x;}",
+            reg->PC, gambel->cpu->memory[gambel->cpu->registers.PC], reg->SP, reg->A, reg->F, reg->AF, reg->B, reg->C, reg->BC, reg->D, reg->E, reg->DE, reg->H, reg->L, reg->HL);
+
+    //qDebug() << f;
+    for (int i = 0; i < 0x6320; i++)
+    {
+GB_Step(gambel);
+    }
+
+
+
+    ui->flagBoxZ->setChecked(gambel->cpu->registers.zero);
+    ui->flagBoxN->setChecked(gambel->cpu->registers.negative);
+    ui->flagBoxH->setChecked(gambel->cpu->registers.halfCarry);
+    ui->flagBoxC->setChecked(gambel->cpu->registers.carry);
+
+
+    //QAbstractItemModel* model = ui->listView->model();
+    ui->listWidget->insertItem(ui->listWidget->count(), f);
+    ui->listWidget->scrollToBottom();
+
 }
