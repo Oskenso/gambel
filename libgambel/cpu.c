@@ -375,6 +375,21 @@ u8 ins_0xCD(CPU* cpu)
 }
 
 
+//AND E -- 1  4 -- Z 0 1 0
+u8 ins_0xA3(CPU* cpu)
+{
+	cpu->registers.E &= cpu->registers.E;
+	if (cpu->registers.E == 0)
+		cpu->registers.zero = 1;
+	else
+		cpu->registers.zero = 0;
+
+	cpu->registers.negative = 0;
+	cpu->registers.halfCarry = 1;
+	cpu->registers.carry = 1;
+	return 0;
+}
+
 
 // XOR A
 u8 ins_0xAF(CPU* cpu)
@@ -646,7 +661,7 @@ const INSTRUCTION instructions[256] = {
 	{"", 0, 0, ins_crash},
 {"", 0, 0, ins_crash},
 {"", 0, 0, ins_crash},
-{"", 0, 0, ins_crash},
+{"AND E", 1, 4, ins_0xA3},
 {"", 0, 0, ins_crash},
 {"", 0, 0, ins_crash},
 {"", 0, 0, ins_crash},

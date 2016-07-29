@@ -21,6 +21,11 @@
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
          <widget class="QListWidget" name="listWidget">
+          <property name="font">
+           <font>
+            <family>Ubuntu Mono</family>
+           </font>
+          </property>
           <property name="mouseTracking">
            <bool>false</bool>
           </property>
@@ -107,7 +112,7 @@
      <x>0</x>
      <y>0</y>
      <width>769</width>
-     <height>20</height>
+     <height>19</height>
     </rect>
    </property>
   </widget>
