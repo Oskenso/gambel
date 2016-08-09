@@ -211,6 +211,14 @@ u8 ins_0x11(CPU* cpu)
 u8 ins_0x17(CPU* cpu)
 {
 
+	u8 carry = (cpu->registers.A >= 0x80);
+	cpu->registers.A <<= 1;
+	cpu->registers.A |= cpu->registers.carry;
+	cpu->registers.carry = carry;
+
+
+	/*
+
     u8 carry = cpu->registers.carry;
     if (cpu->registers.A & 0x80)
         cpu->registers.carry = 1;
@@ -219,7 +227,7 @@ u8 ins_0x17(CPU* cpu)
 
     cpu->registers.A <<= 1;
 	cpu->registers.A |= carry;
-
+*/
 	cpu->registers.zero = (cpu->registers.A == 0);
 	cpu->registers.negative = cpu->registers.halfCarry = 0;
 
@@ -258,10 +266,46 @@ u8 ins_0x21(CPU* cpu)
 	return 0;
 }
 
+u8 ins_0x22(CPU* cpu)
+{
+	cpu->memory[cpu->registers.HL] = cpu->registers.A;
+	cpu->registers.HL++;
+	return 0;
+}
+
+u8 ins_0x23(CPU* cpu)
+{
+	cpu->registers.HL++;
+	return 0;
+}
+
 u8 ins_0x27(CPU* cpu)
 {
 	u16 s = cpu->registers.A;
 
+
+	if ( ! cpu->registers.negative) {
+		if (cpu->registers.halfCarry || ((s & 0xf) > 9))
+			s += 0x6;
+		if (cpu->registers.carry || (s > 0x9f))
+			s += 0x6;
+
+	} else {
+		if (cpu->registers.halfCarry)
+			s = (s - 0) & 0xFF;
+		if (cpu->registers.carry)
+			s -= 0x60;
+
+	}
+
+	cpu->registers.halfCarry = 0;
+	cpu->registers.zero = 0;
+
+	if ((s & 0x100) == 0x100)
+		cpu->registers.carry = 1;
+	cpu->registers.zero =  ((s & 0xFF) == 0);
+
+/*
 	if(cpu->registers.negative) {
 		if(cpu->registers.halfCarry) s = (s - 0x06)&0xFF;
 		if(cpu->registers.carry) s -= 0x60;
@@ -281,7 +325,7 @@ u8 ins_0x27(CPU* cpu)
 
 	if(s >= 0x100)
 		cpu->registers.carry = 1;
-
+*/
 
 	return 0;
 }
@@ -362,15 +406,19 @@ u8 ins_0xC5(CPU* cpu)
 
 u8 ins_0xCD(CPU* cpu)
 {
-	//cpu->registers.SP;
+
+	u16 npc = ReadNextShort(cpu);
+	cpu->registers.SP -= 2;
+	MemWriteShort(cpu, cpu->registers.SP, cpu->registers.PC +2);
+	cpu->registers.PC = npc - 2;
+
+/*
 	cpu->registers.SP -= 2;
 	MemWriteShort(cpu, cpu->registers.SP, cpu->memory[cpu->registers.PC]);
 	cpu->registers.PC = cpu->memory[cpu->registers.PC];
-	cpu->registers.PC -= 2;
-	/*cpu->registers.SP = cpu->registers.PC - 2;
-	cpu->registers.PC = cpu->memory[cpu->registers.PC];
-	cpu->registers.PC -= 2;
+	cpu->registers.PC -= 4;
 	*/
+
 	return 0;
 }
 
@@ -378,6 +426,15 @@ u8 ins_0xCD(CPU* cpu)
 //AND E -- 1  4 -- Z 0 1 0
 u8 ins_0xA3(CPU* cpu)
 {
+
+	cpu->registers.E = cpu->registers.A & cpu->registers.E;
+	cpu->registers.halfCarry = 1;
+	cpu->registers.zero = (cpu->registers.E == 0);
+	cpu->registers.negative = 0;
+	cpu->registers.carry = 0;
+	/*
+
+	cpu->registers.E &= cpu->memory[cpu->registers.PC];
 	cpu->registers.E &= cpu->registers.E;
 	if (cpu->registers.E == 0)
 		cpu->registers.zero = 1;
@@ -386,7 +443,7 @@ u8 ins_0xA3(CPU* cpu)
 
 	cpu->registers.negative = 0;
 	cpu->registers.halfCarry = 1;
-	cpu->registers.carry = 1;
+	cpu->registers.carry = 1;*/
 	return 0;
 }
 
@@ -498,8 +555,8 @@ const INSTRUCTION instructions[256] = {
 
 	{"JR NZ,r8", 2, 8, ins_0x20},
 	{"LD HL,d16", 3, 12, ins_0x21},
-	{"", 0, 0, ins_crash},
-{"", 0, 0, ins_crash},
+	{"LD (HL+), A", 1, 8, ins_0x22},//LD (HL+),A 1  8 - - - -
+	{"INC HL", 1, 8, ins_0x23},
 {"", 0, 0, ins_crash},
 {"", 0, 0, ins_crash},
 {"", 0, 0, ins_crash},
@@ -775,30 +832,13 @@ const INSTRUCTION instructions[256] = {
 //RL C
 u8 ins_0xCB11(CPU* cpu)
 {
-
-    u8 carry = ((cpu->registers.C & 0x80) == 0x80);
-    //u8 carry = cpu->registers.carry;
-    cpu->registers.carry = (cpu->registers.C & 0x80);
-
-    cpu->registers.C <<= 1;
-    cpu->registers.C += cpu->registers.carry;
-    cpu->registers.carry = carry;
-    cpu->registers.zero = (cpu->registers.C == 0);
-
-    /*
-	u8 carry = cpu->registers.carry;
-	if (cpu->registers.C & 0x80)
-		cpu->registers.carry = 1;
+	u8 carry = (cpu->registers.C >= 0x80);
 	cpu->registers.C <<= 1;
-	cpu->registers.C += carry;
-	if (cpu->registers.C)
-		cpu->registers.zero = 0;
-	else
-		cpu->registers.zero = 1;
-    */
-	cpu->registers.negative = cpu->registers.halfCarry = 0;
+	cpu->registers.C |= cpu->registers.carry;
+	cpu->registers.carry = carry;
+	cpu->registers.halfCarry = cpu->registers.negative = 0;
 
-
+	cpu->registers.zero = (cpu->registers.C == 0);
 	return 0;
 }
 

@@ -69,12 +69,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 
-	for (int i = 0; i < 0x6010; i++)
+	for (int i = 0; i < 0x6000; i++)
 	{
 		GB_Step(gambel);
 	}
-
-
 
 
 
@@ -90,14 +88,33 @@ MainWindow::~MainWindow()
 void MainWindow::on_pushButton_clicked()
 {
     char f[300];
-    REGISTERS *reg = &gambel->cpu->registers;
-
-    sprintf(f, "{PC %04x: 0x%02x SP: %02x; A: %02x; F: %02x; AF: %04x; B: %02x; C: %02x; BC: %04x; D: %02x; E: %02x; DE: %04x; H: %02x; L: %02x; HL: %04x;}",
-            reg->PC, gambel->cpu->memory[gambel->cpu->registers.PC], reg->SP, reg->A, reg->F, reg->AF, reg->B, reg->C, reg->BC, reg->D, reg->E, reg->DE, reg->H, reg->L, reg->HL);
-
+	REGISTERS *reg = &gambel->cpu->registers;
 
 	GB_Step(gambel);
+	sprintf(f, "{PC %04x: 0x%02x}",reg->PC, gambel->cpu->memory[gambel->cpu->registers.PC]);
 
+	char tempVal[5];
+
+
+	sprintf(tempVal, "%04x", gambel->cpu->registers.AF);
+
+	if (ui->labelRegAF->text() == QString(tempVal))
+		ui->labelRegValAF->setText(tempVal);
+
+	sprintf(tempVal, "%04x", gambel->cpu->registers.BC);
+	ui->labelRegValBC->setText(tempVal);
+
+	sprintf(tempVal, "%04x", gambel->cpu->registers.DE);
+	ui->labelRegValDE->setText(tempVal);
+
+	sprintf(tempVal, "%04x", gambel->cpu->registers.HL);
+	ui->labelRegValHL->setText(tempVal);
+
+	sprintf(tempVal, "%04x", gambel->cpu->registers.SP);
+	ui->labelRegValSP->setText(tempVal);
+
+	sprintf(tempVal, "%04x", gambel->cpu->registers.PC);
+	ui->labelRegValPC->setText(tempVal);
 
     ui->flagBoxZ->setChecked(gambel->cpu->registers.zero);
     ui->flagBoxN->setChecked(gambel->cpu->registers.negative);
