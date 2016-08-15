@@ -206,6 +206,12 @@ u8 ins_0x11(CPU* cpu)
 	return 0;
 }
 
+u8 ins_0x13(CPU* cpu)
+{
+	cpu->registers.DE--;
+	return 0;
+}
+
 
 //RLA
 u8 ins_0x17(CPU* cpu)
@@ -381,6 +387,13 @@ u8 ins_0x77(CPU* cpu)
 	return 0;
 }
 
+//LD A,E
+u8 ins_0x7B(CPU* cpu)
+{
+	cpu->registers.A = cpu->registers.E;
+	return 0;
+}
+
 //POP BC
 u8 ins_0xC1(CPU* cpu)
 {
@@ -404,12 +417,20 @@ u8 ins_0xC5(CPU* cpu)
 	return 0;
 }
 
+u8 ins_0xC9(CPU* cpu)
+{
+	//RET 1  16 - - - -
+	cpu->registers.PC = cpu->memory[cpu->registers.SP];
+	cpu->registers.SP += 2;
+	return 0;
+}
+
 u8 ins_0xCD(CPU* cpu)
 {
 
 	u16 npc = ReadNextShort(cpu);
 	cpu->registers.SP -= 2;
-	MemWriteShort(cpu, cpu->registers.SP, cpu->registers.PC +2);
+	MemWriteShort(cpu, cpu->registers.SP, cpu->registers.PC+2 );
 	cpu->registers.PC = npc - 2;
 
 /*
@@ -536,8 +557,9 @@ const INSTRUCTION instructions[256] = {
 
 	{"LD DE,d16", 3, 12, ins_0x11},
 	{"", 0, 0, ins_crash},
+	{"INC DE", 1, 8, ins_0x13},
 {"", 0, 0, ins_crash},
-{"", 0, 0, ins_crash},
+
 {"", 0, 0, ins_crash},
 {"", 0, 0, ins_crash},
     {"RLA", 1, 4, ins_0x17},
@@ -674,7 +696,7 @@ const INSTRUCTION instructions[256] = {
 
 	{"", 0, 0, ins_crash},
 {"", 0, 0, ins_crash},
-{"", 0, 0, ins_crash},
+{"LD A, E", 1, 4, ins_0x7B},//LD A,E 1  4
 {"", 0, 0, ins_crash},
 {"", 0, 0, ins_crash},
 {"", 0, 0, ins_crash},
@@ -760,7 +782,7 @@ const INSTRUCTION instructions[256] = {
 	{"", 0, 0, ins_crash},
 {"", 0, 0, ins_crash},
 {"", 0, 0, ins_crash},
-{"", 0, 0, ins_crash},
+{"RET", 1, 16, ins_0xC9},
 {"", 0, 0, ins_crash},
 
 	{"PREFIX CB", 1, 4, ins_nop}, //nope ;3

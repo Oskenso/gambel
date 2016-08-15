@@ -69,7 +69,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 
-	for (int i = 0; i < 0x6000; i++)
+	//for (int i = 0; i < 0x6060; i++)
+	for (int i = 0; i <   0xA460; i++)
 	{
 		GB_Step(gambel);
 	}

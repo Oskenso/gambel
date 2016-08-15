@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>474</width>
-    <height>391</height>
+    <width>574</width>
+    <height>422</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -159,10 +159,7 @@
                  <item>
                   <widget class="QLabel" name="labelRegValAF">
                    <property name="font">
-					   <font>
-                        <family>Ubuntu Mono</family>
-                        <pointsize>14</pointsize>
-                       </font>
+                    <font/>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">text-transform: uppercase;</string>
@@ -175,10 +172,7 @@
                  <item>
                   <widget class="QLabel" name="labelRegValBC">
                    <property name="font">
-					   <font>
-                        <family>Ubuntu Mono</family>
-                        <pointsize>14</pointsize>
-                       </font>
+                    <font/>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">text-transform: uppercase;</string>
@@ -191,10 +185,7 @@
                  <item>
                   <widget class="QLabel" name="labelRegValDE">
                    <property name="font">
-					   <font>
-                        <family>Ubuntu Mono</family>
-                        <pointsize>14</pointsize>
-                       </font>
+                    <font/>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">text-transform: uppercase;</string>
@@ -207,10 +198,7 @@
                  <item>
                   <widget class="QLabel" name="labelRegValHL">
                    <property name="font">
-                    <font>
-                     <family>Ubuntu Mono</family>
-                     <pointsize>14</pointsize>
-                    </font>
+                    <font/>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">text-transform: uppercase;</string>
@@ -223,10 +211,7 @@
                  <item>
                   <widget class="QLabel" name="labelRegValSP">
                    <property name="font">
-					   <font>
-                        <family>Ubuntu Mono</family>
-                        <pointsize>14</pointsize>
-                       </font>
+                    <font/>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">text-transform:uppercase;</string>
@@ -239,10 +224,7 @@
                  <item>
                   <widget class="QLabel" name="labelRegValPC">
                    <property name="font">
-					   <font>
-                        <family>Ubuntu Mono</family>
-                        <pointsize>14</pointsize>
-                       </font>
+                    <font/>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">text-transform:uppercase;</string>
@@ -373,7 +355,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>474</width>
+     <width>574</width>
      <height>19</height>
     </rect>
    </property>
