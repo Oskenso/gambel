@@ -39,16 +39,7 @@
              <string>Registers</string>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_7">
-             <property name="spacing">
-              <number>6</number>
-             </property>
              <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>18</number>
-             </property>
-             <property name="bottomMargin">
               <number>9</number>
              </property>
              <item>
@@ -65,8 +56,8 @@
                   <widget class="QLabel" name="labelRegAF">
                    <property name="font">
                     <font>
-                     <family>Ubuntu Mono</family>
-                     <pointsize>14</pointsize>
+                     <family>Monospace</family>
+                     <pointsize>10</pointsize>
                     </font>
                    </property>
                    <property name="text">
@@ -78,8 +69,8 @@
                   <widget class="QLabel" name="labelRegBC">
                    <property name="font">
                     <font>
-                     <family>Ubuntu Mono</family>
-                     <pointsize>14</pointsize>
+                     <family>Monospace</family>
+                     <pointsize>10</pointsize>
                     </font>
                    </property>
                    <property name="text">
@@ -91,8 +82,8 @@
                   <widget class="QLabel" name="labelRegDE">
                    <property name="font">
                     <font>
-                     <family>Ubuntu Mono</family>
-                     <pointsize>14</pointsize>
+                     <family>Monospace</family>
+                     <pointsize>10</pointsize>
                     </font>
                    </property>
                    <property name="text">
@@ -104,8 +95,8 @@
                   <widget class="QLabel" name="labelRegHL">
                    <property name="font">
                     <font>
-                     <family>Ubuntu Mono</family>
-                     <pointsize>14</pointsize>
+                     <family>Monospace</family>
+                     <pointsize>10</pointsize>
                     </font>
                    </property>
                    <property name="text">
@@ -117,8 +108,8 @@
                   <widget class="QLabel" name="labelRegSP">
                    <property name="font">
                     <font>
-                     <family>Ubuntu Mono</family>
-                     <pointsize>14</pointsize>
+                     <family>Monospace</family>
+                     <pointsize>10</pointsize>
                     </font>
                    </property>
                    <property name="text">
@@ -130,8 +121,8 @@
                   <widget class="QLabel" name="labelRegPC">
                    <property name="font">
                     <font>
-                     <family>Ubuntu Mono</family>
-                     <pointsize>14</pointsize>
+                     <family>Monospace</family>
+                     <pointsize>10</pointsize>
                     </font>
                    </property>
                    <property name="text">
@@ -159,7 +150,10 @@
                  <item>
                   <widget class="QLabel" name="labelRegValAF">
                    <property name="font">
-                    <font/>
+                    <font>
+                     <family>Monospace</family>
+                     <pointsize>10</pointsize>
+                    </font>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">text-transform: uppercase;</string>
@@ -172,7 +166,10 @@
                  <item>
                   <widget class="QLabel" name="labelRegValBC">
                    <property name="font">
-                    <font/>
+                    <font>
+                     <family>Monospace</family>
+                     <pointsize>10</pointsize>
+                    </font>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">text-transform: uppercase;</string>
@@ -185,7 +182,10 @@
                  <item>
                   <widget class="QLabel" name="labelRegValDE">
                    <property name="font">
-                    <font/>
+                    <font>
+                     <family>Monospace</family>
+                     <pointsize>10</pointsize>
+                    </font>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">text-transform: uppercase;</string>
@@ -198,7 +198,10 @@
                  <item>
                   <widget class="QLabel" name="labelRegValHL">
                    <property name="font">
-                    <font/>
+                    <font>
+                     <family>Monospace</family>
+                     <pointsize>10</pointsize>
+                    </font>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">text-transform: uppercase;</string>
@@ -211,7 +214,10 @@
                  <item>
                   <widget class="QLabel" name="labelRegValSP">
                    <property name="font">
-                    <font/>
+                    <font>
+                     <family>Monospace</family>
+                     <pointsize>10</pointsize>
+                    </font>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">text-transform:uppercase;</string>
@@ -224,7 +230,10 @@
                  <item>
                   <widget class="QLabel" name="labelRegValPC">
                    <property name="font">
-                    <font/>
+                    <font>
+                     <family>Monospace</family>
+                     <pointsize>10</pointsize>
+                    </font>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">text-transform:uppercase;</string>
@@ -273,12 +282,6 @@
              <string>Flags</string>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_2">
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
              <item>
               <widget class="QCheckBox" name="flagBoxZ">
                <property name="text">

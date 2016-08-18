@@ -4,6 +4,7 @@
 #include "qdebug.h"
 
 #include <QFileDialog>
+#include <QFontDatabase>
 #include <string.h>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -71,6 +72,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	//for (int i = 0; i < 0x6060; i++)
 	for (int i = 0; i <   0xA460; i++)
+	//for (int i = 0; i <   0xA000; i++)
 	{
 		GB_Step(gambel);
 	}
@@ -99,7 +101,7 @@ void MainWindow::on_pushButton_clicked()
 
 	sprintf(tempVal, "%04x", gambel->cpu->registers.AF);
 
-	if (ui->labelRegAF->text() == QString(tempVal))
+	//if (ui->labelRegAF->text() != QString(tempVal))
 		ui->labelRegValAF->setText(tempVal);
 
 	sprintf(tempVal, "%04x", gambel->cpu->registers.BC);
