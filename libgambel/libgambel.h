@@ -16,6 +16,7 @@ extern "C" {
 #include "cpu.h"
 #include <string.h>
 
+
 typedef struct {
 	//u8 memory;
 	CPU *cpu;

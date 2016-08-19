@@ -22,6 +22,23 @@ void MemWriteShort(CPU* cpu, u16 addr, u16 val)
 	cpu->memory[addr + 1] = (val & 0xFF00) >> 8;
 }
 
+void DecReg(CPU* cpu, u8* reg)
+{
+	(*reg)--;
+
+	if ( ! cpu->registers.carry) {
+		cpu->registers.F = 0;
+	}
+
+	cpu->registers.negative = 1;
+
+	cpu->registers.zero = ( (*reg) == 0);
+	cpu->registers.halfCarry = (((*reg) & 0x0F) == 0x0F);
+
+
+	return 0;
+}
+
 void IncReg(CPU* cpu, u8* reg)
 {
 	//*reg++;//tODO : CHECK
@@ -188,7 +205,7 @@ u8 ins_0x0C(CPU* cpu)
 
 u8 ins_0x0D(CPU* cpu)
 {
-	cpu->registers.D--;
+	DecReg(cpu, &cpu->registers.D);
 	return 0;
 }
 
@@ -357,6 +374,13 @@ u8 ins_0x32(CPU* cpu)
 {
 	cpu->memory[cpu->registers.HL] = cpu->registers.A;
 	cpu->registers.HL--;
+	return 0;
+}
+
+//DEC A
+u8 ins_0x3D(CPU* cpu)
+{
+	DecReg(cpu, &cpu->registers.A);
 	return 0;
 }
 
@@ -547,7 +571,7 @@ const INSTRUCTION instructions[256] = {
 	{"LD A, BC", 1, 8, ins_0x0A},
 	{"DEC BC", 1, 8, ins_0x0B},
 	{"INC C", 1, 4, ins_0x0C},
-	{"", 0, 0, ins_crash},
+	{"DEC D", 1, 4, ins_0x0D},
 
 	{"LD C,d8", 2, 8, ins_0x0E},
 	{"", 0, 0, ins_crash},
@@ -615,7 +639,7 @@ const INSTRUCTION instructions[256] = {
 {"", 0, 0, ins_crash},
 {"", 0, 0, ins_crash},
 {"", 0, 0, ins_crash},
-{"", 0, 0, ins_crash},
+{"DEC A", 1, 4, ins_0x3D},
 
 	{"LD A,d8", 2, 8, ins_0x3E},
 	{"", 0, 0, ins_crash},
