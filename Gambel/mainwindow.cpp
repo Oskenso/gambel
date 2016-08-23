@@ -95,12 +95,6 @@ void MainWindow::on_pushButton_clicked()
 
 	GB_Step(gambel);
 
-	QGraphicsScene* scene =  ui->graphicsView->scene();
-
-	QPainter *painter = new QPainter();
-
-	scene->drawBackground(painter, new QRectF(0, 0, 160, 144));
-
 
 	sprintf(f, "{PC %04x: 0x%02x}",reg->PC, gambel->cpu->memory[gambel->cpu->registers.PC]);
 

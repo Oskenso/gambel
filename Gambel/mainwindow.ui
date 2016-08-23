@@ -36,7 +36,26 @@
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_9">
             <item>
-             <widget class="QGraphicsView" name="graphicsView"/>
+             <widget class="GLRender" name="openGLWidget">
+              <property name="minimumSize">
+               <size>
+                <width>160</width>
+                <height>144</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>160</width>
+                <height>144</height>
+               </size>
+              </property>
+              <property name="baseSize">
+               <size>
+                <width>160</width>
+                <height>144</height>
+               </size>
+              </property>
+             </widget>
             </item>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -367,6 +386,13 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>GLRender</class>
+   <extends>QOpenGLWidget</extends>
+   <header>glrender.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
