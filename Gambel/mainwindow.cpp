@@ -79,7 +79,17 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 
+	timer = new  QTimer(this);
+	connect(timer, SIGNAL(timeout()), this, SLOT(updateRender()));
+	timer->setInterval(16);
+	timer->start(0);
 
+}
+
+
+void MainWindow::updateRender()
+{
+	ui->openGLWidget->update();
 }
 
 MainWindow::~MainWindow()
@@ -87,6 +97,7 @@ MainWindow::~MainWindow()
     GB_Destroy(gambel);
 	delete ui;
 }
+
 
 void MainWindow::on_pushButton_clicked()
 {

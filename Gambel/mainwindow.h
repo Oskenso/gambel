@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QTimer>
 
 #include "libgambel.h"
 
@@ -18,9 +19,12 @@ public:
 
 private slots:
     void on_pushButton_clicked();
+	void updateRender();
+
 
 private:
 	Ui::MainWindow *ui;
     GB* gambel;
+	QTimer *timer;
     //char* f;
 };
