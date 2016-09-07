@@ -21,6 +21,7 @@ private slots:
 
 private:
 	Ui::MainWindow *ui;
-    GB* gambel;
+	GB* gambel;
+	QImage *screen;
     //char* f;
 };

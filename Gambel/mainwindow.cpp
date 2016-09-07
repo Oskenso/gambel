@@ -68,15 +68,21 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 
+	screen = new QImage(160, 144, QImage::Format_RGB888);
 
-
-	//for (int i = 0; i < 0x6060; i++)
+	//for (int i = 0; i < 0xB060; i++)
 	for (int i = 0; i <   0xA460; i++)
-	//for (int i = 0; i <   0xA000; i++)
 	{
 		GB_Step(gambel);
 	}
 
+
+	for (int i = 0; i < (160*144); i++) {
+		screen->setPixelColor((int) i % 160, (int)  i / 160, QColor(0, 0, 0));
+	}
+
+	QPixmap pixmap = QPixmap::fromImage(*screen);
+	ui->label->setPixmap(pixmap);
 
 
 
@@ -95,11 +101,54 @@ void MainWindow::on_pushButton_clicked()
 
 	GB_Step(gambel);
 
-	QGraphicsScene* scene =  ui->graphicsView->scene();
 
-	QPainter *painter = new QPainter();
+	unsigned char sprIndex = 0;
+	/*
+	for (int i = 0; i < (160*144); i+=2) {
+		unsigned char lsb = gambel->cpu->memory[0x8000 + i];
+		unsigned char msb = gambel->cpu->memory[0x8000 + i + 1];
 
-	scene->drawBackground(painter, new QRectF(0, 0, 160, 144));
+
+		unsigned char x;
+		unsigned char y;
+
+
+		unsigned char color = ((lsb & 1) == 1) | (((msb & 1) == 1) << 1);
+
+		for (int sprW = 0; sprW < 8; sprW++) {
+			color = (lsb & (2^(7-sprW)) == (2^(7-sprW))) | (msb & (2^(7-sprW)) == (2^(7-sprW)));
+		}
+
+
+		for (int sprY = 0; sprY < 8; sprY++) {
+			for (int sprX = 0; sprX < 8; sprX++) {
+				//color = ( ((lsb & (sprX+1)) == (sprX+1)) | (((msb & (sprX+1)) == (sprX+1)) << 1) );
+
+				x = sprX * (i % 20);
+				y = sprY * ( (int) ((i / 8) / 144));
+
+				//color = (lsb & (2^sprX) == (2^sprX)) | (msb & (2^sprX) == (2^sprX)) ;
+				color = (lsb & (2^(7-sprX)) == (2^(7-sprX))) | (msb & (2^(7-sprX)) == (2^(7-sprX))) ;
+				screen->setPixelColor(x, y, QColor(color * 85, color* 85, color * 85));
+			}
+		}
+
+	*/
+
+	for (int i = 0; i < 0x7FF; i++) {
+
+	}
+
+	/*
+	for (int x = 0; x < 160; x++) {
+		for (int y = 0; y < 144; y++) {
+			screen->setPixelColor(x, y, QColor(gambel->cpu->memory[0x8000], 0, 0));
+		}
+	}*/
+
+	QPixmap pixmap = QPixmap::fromImage(*screen);
+
+	ui->label->setPixmap(pixmap);
 
 
 	sprintf(f, "{PC %04x: 0x%02x}",reg->PC, gambel->cpu->memory[gambel->cpu->registers.PC]);
