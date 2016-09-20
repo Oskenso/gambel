@@ -135,9 +135,55 @@ void MainWindow::on_pushButton_clicked()
 
 	*/
 
-	for (int i = 0; i < 0x7FF; i++) {
+	QList<QImage> *tileList = new QList<QImage>();
+
+
+	for (int t = 0; t < 192; t++) {
+		QImage tile(8, 8, QImage::Format_RGB888);
+
+		for (int ti = 0; ti < (8*8); ti++) {
+			unsigned char x = ti % 8;
+			unsigned char y = (unsigned char) ti / 8;
+
+			unsigned char lsb = gambel->cpu->memory[0x8000 + ti ];
+			unsigned char msb = gambel->cpu->memory[0x8001 + ti ];
+
+			for (int bit = 7; bit >= 0; bit--) {
+				x = bit * ti;
+
+				unsigned char color = ((msb & (2^bit)) == (2^bit)) | ((lsb & (2^bit)) == (2^bit));
+				tile.setPixelColor(x, y, QColor(color * 85, color * 85, color *85));
+			}
+		}
+
+		/*
+		//rows
+		for (int yy = 0; yy < 8; yy++) {
+
+			//cols
+			for (int xx = 0; xx < 8; xx++) {
+
+				//ls-Byte
+				unsigned char lsb = gambel->cpu->memory[0x8000 + xx + yy ];
+				unsigned char msb = gambel->cpu->memory[0x8000 + xx + yy +1];
+				for (int bit = 7; bit >= 0; bit--) {
+
+					unsigned char color = ((msb & (2^bit)) == (2^bit)) | ((lsb & (2^bit)) == (2^bit));
+					tile.setPixelColor(xx, yy, QColor(color * 85, color * 85, color *85));
+				}
+
+
+			}
+		}*/
+
+		//tile.setPixelColor(0, 0, QColor(0,0,0));
+
+		tileList->append(tile);
 
 	}
+
+	QPixmap bg = QPixmap::fromImage( tileList->at(0));
+	ui->label->setPixmap(bg);
 
 	/*
 	for (int x = 0; x < 160; x++) {
@@ -146,9 +192,9 @@ void MainWindow::on_pushButton_clicked()
 		}
 	}*/
 
-	QPixmap pixmap = QPixmap::fromImage(*screen);
+	//QPixmap pixmap = QPixmap::fromImage(*screen);
 
-	ui->label->setPixmap(pixmap);
+	//ui->label->setPixmap(pixmap);
 
 
 	sprintf(f, "{PC %04x: 0x%02x}",reg->PC, gambel->cpu->memory[gambel->cpu->registers.PC]);
